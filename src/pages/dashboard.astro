@@ -1,0 +1,12 @@
+---
+const { user } = Astro.locals;
+
+if (!user) return Astro.redirect("/login");
+
+// Redirect ke path root masing-masing
+if (user.role === 'admin') {
+  return Astro.redirect("/admin"); // Sekarang rute ini ADA filenya
+} else {
+  return Astro.redirect("/user");
+}
+---

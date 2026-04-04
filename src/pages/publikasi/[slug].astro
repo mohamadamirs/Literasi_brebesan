@@ -1,0 +1,72 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { sql } from "../../lib/db";
+
+// 1. Tangkap slug dari URL
+const { slug } = Astro.params;
+
+// 2. Tarik data postingan berdasarkan slug tersebut
+const { rows } = await sql`
+  SELECT
+    p.title,
+    p.content,
+    p.updated_at,
+    pr.full_name as author_name
+  FROM posts p
+  LEFT JOIN profiles pr ON p.user_id = pr.id
+  WHERE p.slug = ${slug} AND p.status = 'published'
+`;
+
+const post = rows[0];
+
+// 3. Proteksi: Kalau artikel gak ada (atau statusnya bukan published), tampilin 404
+if (!post) {
+  return new Response("Waduh, tulisannya gak ketemu atau belum dirilis, Nyet!", {
+    status: 404,
+    statusText: 'Not found'
+  });
+}
+
+// Fungsi format tanggal
+const formatDate = (date: any) => {
+  if (!date) return "";
+  return new Date(date).toLocaleDateString("id-ID", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+---
+
+<Layout title={`${post.title} | Literasi Brebesan`}>
+  <main class="min-h-screen bg-white pt-24 pb-20">
+
+    <div class="max-w-3xl mx-auto px-4 mb-8">
+      <a href="/publikasi" class="inline-flex items-center text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Kembali ke Daftar Tulisan
+      </a>
+    </div>
+
+    <article class="max-w-3xl mx-auto px-4">
+
+      <header class="mb-10 border-b border-slate-100 pb-8">
+        <h1 class="text-4xl md:text-5xl font-black text-slate-900 leading-tight mb-6">
+          {post.title}
+        </h1>
+
+        <div class="flex items-center text-slate-500 text-sm">
+          <div class="flex items-center bg-blue-50 px-3 py-1.5 rounded-lg font-bold mr-4 text-blue-700">
+            ✍️ {post.author_name || "Anonim"}
+          </div>
+          <time class="font-medium text-slate-400">📅 {formatDate(post.updated_at)}</time>
+        </div>
+      </header>
+
+      <div class="text-lg text-slate-800 leading-relaxed whitespace-pre-wrap tracking-wide">
+        {post.content}
+      </div>
+
+    </article>
+  </main>
+</Layout>

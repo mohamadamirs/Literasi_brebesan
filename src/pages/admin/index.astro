@@ -1,0 +1,100 @@
+---
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import { sql } from "../../lib/db";
+import { actions } from "astro:actions";
+import PostCard from "../../components/posts/PostCard.astro";
+
+const { user } = Astro.locals;
+
+// Proteksi Satpam
+if (user?.role !== 'admin') return Astro.redirect('/user');
+
+// Ambil semua data postingan
+const { rows: allPosts } = await sql`
+  SELECT p.*, pr.full_name as author
+  FROM posts p
+  JOIN profiles pr ON p.user_id = pr.id
+  ORDER BY
+    CASE WHEN p.status = 'pending' THEN 1 ELSE 2 END,
+    p.created_at DESC
+`;
+
+// Hitung statistik simpel
+const stats = {
+  pending: allPosts.filter(p => p.status === 'pending').length,
+  published: allPosts.filter(p => p.status === 'published').length,
+  total: allPosts.length
+};
+---
+
+<DashboardLayout title="Admin Panel">
+  <div class="pt-12 md:pt-16 max-w-3xl mx-auto">
+
+    <div class="mb-6 px-1">
+      <h1 class="text-xl font-bold text-slate-900">Panel Admin</h1>
+      <p class="text-xs text-slate-500">Kelola konten Literasi Brebesan</p>
+    </div>
+<div class="pt-16 max-w-2xl mx-auto px-4">
+    <div class="grid gap-4">
+      {allPosts.map((p) => (
+        <PostCard post={p} isAdmin={true}>
+          <button slot="actions" class="text-rose-500 p-1">
+             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </PostCard>
+      ))}
+    </div>
+  </div>
+
+    <div class="space-y-2">
+      <div class="px-1 mb-3">
+        <h2 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Daftar Postingan</h2>
+      </div>
+
+      {allPosts.length === 0 ? (
+        <div class="p-10 text-center bg-white border border-slate-200 rounded-2xl">
+          <p class="text-sm text-slate-400 font-medium">Gak ada postingan, Nyet.</p>
+        </div>
+      ) : (
+        allPosts.map((post) => (
+          <div class={`bg-white p-3 rounded-xl border transition-colors ${post.status === 'pending' ? 'border-blue-200 bg-blue-50/30' : 'border-slate-100'}`}>
+            <div class="flex flex-col gap-3">
+
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                    post.status === 'published' ? 'bg-green-100 text-green-700' :
+                    post.status === 'pending' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'
+                  }`}>
+                    {post.status}
+                  </span>
+                  <span class="text-[10px] font-medium text-slate-400 truncate">Oleh: {post.author}</span>
+                </div>
+                <h3 class="text-sm font-bold text-slate-900 leading-snug">{post.title}</h3>
+              </div>
+
+              <div class="flex items-center gap-1.5 border-t border-slate-100 pt-3">
+                {post.status !== 'published' && (
+                  <form method="POST" action={actions.approvePost} class="flex-1 m-0">
+                    <input type="hidden" name="id" value={post.id} />
+                    <input type="hidden" name="title" value={post.title} />
+                    <input type="hidden" name="status" value="published" />
+                    <button type="submit" class="w-full bg-green-600 text-white text-[10px] font-bold uppercase py-2 rounded-lg hover:bg-green-700 active:scale-95 transition-all">ACC</button>
+                  </form>
+                )}
+
+                <a href={`/user/posts/edit/${post.id}`} class="flex-1 text-center bg-slate-100 text-slate-600 text-[10px] font-bold uppercase py-2 rounded-lg hover:bg-slate-200">Edit</a>
+
+                <form method="POST" action={actions.deletePost} class="flex-1 m-0">
+                  <input type="hidden" name="id" value={post.id} />
+                  <button type="submit" class="w-full bg-white border border-rose-100 text-rose-500 text-[10px] font-bold uppercase py-2 rounded-lg hover:bg-rose-50">Hapus</button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+</DashboardLayout>

@@ -1,0 +1,151 @@
+---
+// 1. Ambil satu-satunya sumber data dari Middleware
+const { user } = Astro.locals;
+
+// Nav Config
+const navLinks = [
+  { name: "Beranda", href: "/" },
+  { name: "Publikasi", href: "/publikasi" },
+  { name: "Galeri", href: "/dokumentasi" },
+];
+
+// Helper buat dapetin inisial nama
+const initial = user?.fullName?.charAt(0) || 'U';
+---
+
+<header-nav>
+  <nav id="main-nav" class="fixed top-3 inset-x-3 md:inset-x-6 z-[60] max-w-7xl mx-auto bg-white/80 backdrop-blur-md border border-slate-200/50 shadow-sm rounded-2xl transition-all duration-300">
+    <div class="px-5 sm:px-8">
+      <div class="flex justify-between items-center h-16">
+
+        <a href="/" class="flex items-center gap-3 group">
+          <img src="/literasi-brebesan.webp" alt="Logo" class="w-8 h-8 rounded-full border border-slate-100 shadow-sm object-cover" />
+          <div class="flex flex-col leading-none pt-0.5">
+            <span class="font-black text-[11px] uppercase tracking-[0.25em] text-slate-900 group-hover:text-blue-600 transition-colors">LIBES</span>
+            <span class="text-[7px] font-bold text-blue-600 uppercase tracking-widest mt-0.5">Brebesan</span>
+          </div>
+        </a>
+
+        <div class="hidden md:flex items-center gap-2">
+          {navLinks.map((link) => (
+            <a href={link.href} class="px-4 py-2 text-[11px] font-bold text-slate-600 hover:text-blue-600 rounded-xl transition-all uppercase tracking-wider">
+              {link.name}
+            </a>
+          ))}
+
+          <div class="h-6 w-px bg-slate-200 mx-2"></div>
+
+          {user ? (
+            <div class="flex items-center gap-2">
+              <a href={user.role === 'admin' ? '/admin' : '/user'} class="px-4 py-2 text-[11px] font-bold text-slate-900 hover:bg-slate-50 rounded-xl transition-all uppercase tracking-wider flex items-center gap-2">
+                <div class="w-5 h-5 rounded-lg bg-blue-600 flex items-center justify-center text-white text-[8px] font-black uppercase">
+                  {initial}
+                </div>
+                Dashboard
+              </a>
+              <form action="/logout" method="POST" class="m-0">
+                <button type="submit" class="px-4 py-2 text-[10px] font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-all uppercase tracking-widest cursor-pointer border-none bg-transparent">
+                  Keluar
+                </button>
+              </form>
+            </div>
+          ) : (
+            <a href="/login" class="bg-blue-600 text-white px-5 py-2.5 rounded-2xl text-[10px] font-bold hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 transition-all uppercase tracking-widest flex items-center gap-2">
+              <span>Login</span>
+            </a>
+          )}
+        </div>
+
+        <button id="menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-900 rounded-xl border border-slate-200/50 hover:bg-slate-100 transition-colors">
+          <div class="flex flex-col gap-1.5 w-4">
+            <span id="l1" class="w-full h-0.5 bg-current rounded-full transition-all duration-300"></span>
+            <span id="l2" class="w-full h-0.5 bg-current rounded-full transition-all duration-300"></span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="overlay" class="fixed inset-0 bg-slate-950/20 backdrop-blur-[2px] z-[80] hidden opacity-0 transition-opacity duration-300"></div>
+
+  <aside id="drawer" class="fixed top-20 right-3 w-[240px] bg-white z-[90] translate-x-[120%] transition-transform duration-300 ease-in-out shadow-2xl rounded-3xl border border-slate-100 flex flex-col overflow-hidden">
+    <div class="p-6">
+      <span class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-4">Menu Utama</span>
+      <nav class="flex flex-col gap-1">
+        {navLinks.map((link) => (
+          <a href={link.href} class="px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-2xl transition-all">{link.name}</a>
+        ))}
+      </nav>
+
+      <div class="mt-6 pt-6 border-t border-slate-100 flex flex-col gap-3">
+        {user ? (
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-2xl">
+              <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white text-xs font-black uppercase">{initial}</div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-xs font-bold text-slate-900 truncate uppercase tracking-tighter">{user.fullName.split(' ')[0]}</span>
+                <span class="text-[8px] text-blue-600 font-black uppercase tracking-widest">{user.role}</span>
+              </div>
+            </div>
+            <a href={user.role === 'admin' ? '/admin' : '/user'} class="block text-center py-3 text-[10px] font-black text-slate-900 bg-slate-100 rounded-2xl uppercase tracking-widest">Akses Dashboard</a>
+            <form action="/logout" method="POST" class="w-full m-0">
+              <button type="submit" class="w-full text-center py-3 text-[10px] font-black text-rose-600 uppercase tracking-widest cursor-pointer bg-rose-50 rounded-2xl">Keluar Akun</button>
+            </form>
+          </div>
+        ) : (
+          <a href="/login" class="flex items-center justify-center bg-slate-900 text-white py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-slate-200 hover:bg-slate-800 transition-all">Masuk Sekarang</a>
+        )}
+      </div>
+    </div>
+  </aside>
+</header-nav>
+
+<script>
+  class HeaderNav extends HTMLElement {
+    constructor() {
+      super();
+      this.isOpen = false;
+    }
+
+    connectedCallback() {
+      // Inisialisasi elemen
+      this.btn = this.querySelector('#menu-btn');
+      this.drawer = this.querySelector('#drawer');
+      this.overlay = this.querySelector('#overlay');
+      this.l1 = this.querySelector('#l1');
+      this.l2 = this.querySelector('#l2');
+
+      // Event Listeners
+      this.btn?.addEventListener('click', () => this.toggleMenu());
+      this.overlay?.addEventListener('click', () => this.toggleMenu(false));
+
+      // Tutup drawer jika link diklik
+      this.querySelectorAll('aside a, aside button').forEach(el => {
+        el.addEventListener('click', () => this.toggleMenu(false));
+      });
+    }
+
+    toggleMenu(force) {
+      this.isOpen = force !== undefined ? force : !this.isOpen;
+
+      if (this.isOpen) {
+        this.overlay?.classList.remove('hidden');
+        setTimeout(() => this.overlay?.classList.add('opacity-100'), 10);
+        this.drawer?.classList.remove('translate-x-[120%]');
+        // Hamburger animation (X shape)
+        this.l1?.classList.add('rotate-45', 'translate-y-[4px]');
+        this.l2?.classList.add('-rotate-45', '-translate-y-[4px]');
+      } else {
+        this.overlay?.classList.remove('opacity-100');
+        setTimeout(() => this.overlay?.classList.add('hidden'), 300);
+        this.drawer?.classList.add('translate-x-[120%]');
+        // Reset hamburger
+        this.l1?.classList.remove('rotate-45', 'translate-y-[4px]');
+        this.l2?.classList.remove('-rotate-45', '-translate-y-[4px]');
+      }
+    }
+  }
+
+  // Daftarkan Custom Element
+  customElements.define('header-nav', HeaderNav);
+</script>

@@ -1,0 +1,37 @@
+/* src/styles/global.css */
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@layer base {
+  html {
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+
+  /* Khusus untuk Heading agar lebih tegas */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em; /* Membuat heading terlihat lebih modern */
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* bg-slate-100 */
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* bg-slate-300 */
+  border-radius: 9999px;
+  border: 4px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* bg-slate-400 */
+}

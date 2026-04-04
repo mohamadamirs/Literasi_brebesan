@@ -1,0 +1,43 @@
+{
+  "name": "libes",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@astrojs/vercel": "10.0.2",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.2.2",
+    "@vercel/postgres": "^0.10.0",
+    "astro": "^6.0.8",
+    "bcryptjs": "^3.0.3",
+    "googleapis": "^171.4.0",
+    "isomorphic-dompurify": "^3.7.1",
+    "jose": "^6.2.2",
+    "marked": "^17.0.5",
+    "pg": "^8.20.0",
+    "tailwindcss": "^4.2.2",
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6"
+  },
+  "overrides": {
+    "@astrojs/vercel": {
+      "astro": "$astro"
+    },
+    "path-to-regexp": "^6.3.0",
+    "vite": "^7"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/pg": "^8.20.0",
+    "@types/uuid": "^10.0.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1"
+  }
+}
