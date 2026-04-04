@@ -1,13 +1,21 @@
 ---
 import "../styles/global.css";
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title: string;
   description?: string;
+  bodyClass?: string; // Memungkinkan kustomisasi class body dari layout turunan
 }
 
-const { title, description = "Wadah literasi digital wong Brebes" } = Astro.props;
+// Menambahkan fallback title agar seragam
+const {
+  title,
+  description = "Wadah literasi digital wong Brebes",
+  bodyClass = "bg-white min-h-screen font-sans antialiased text-slate-900"
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -15,7 +23,7 @@ const { title, description = "Wadah literasi digital wong Brebes" } = Astro.prop
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
+    <title>{title.includes('Literasi Brebesan') ? title : `${title} - Literasi Brebesan`}</title>
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.bunny.net" />
@@ -23,7 +31,7 @@ const { title, description = "Wadah literasi digital wong Brebes" } = Astro.prop
     <ClientRouter />
     <slot name="head" />
   </head>
-  <body class="bg-white">
+  <body class={bodyClass}>
     <slot />
   </body>
 </html>
