@@ -3,7 +3,7 @@ import { SignJWT } from "jose";
 
 export const authSecret = import.meta.env.AUTH_SECRET || process.env.AUTH_SECRET;
 export const SECRET = new TextEncoder().encode(
-  authSecret || "rahasia-darurat-biar-gak-crash",
+  authSecret,
 );
 
 export async function createSessionToken(userId: string) {

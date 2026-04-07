@@ -13,47 +13,106 @@ const errorMessage = result?.error?.message;
 const successMsg = Astro.url.searchParams.get("msg");
 ---
 
-<Layout title="Masuk | Kanca Coding">
-  <main class="bg-slate-50 text-slate-900 flex items-center justify-center min-h-screen p-4 pt-16">
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm border border-slate-100">
-
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-extrabold tracking-tight">Welcome Back!</h1>
-        <p class="text-slate-500 mt-2">Senang melihatmu lagi.</p>
+<Layout title="Masuk | Literasi Brebesan">
+  <main class="bg-gradient-to-br from-indigo-50 via-white to-slate-100 text-slate-900 flex flex-col items-center justify-center min-h-screen p-6">
+    <div class="mb-8 w-full max-w-md">
+      <a href="/" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-indigo-600 transition-all group">
+        <div class="p-2 bg-white rounded-full shadow-sm border border-slate-100 mr-3 group-hover:shadow-md transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </div>
+        Kembali ke Beranda
+      </a>
+    </div>
+    
+    <div class="bg-white/80 backdrop-blur-xl p-8 md:p-10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] w-full max-w-md border border-white/50 relative overflow-hidden">
+      <!-- Decorative element -->
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-50 rounded-full blur-3xl opacity-50"></div>
+      
+      <div class="text-center mb-10 relative">
+        <div class="inline-block p-4 bg-indigo-50 rounded-2xl mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight">Selamat Datang</h1>
+        <p class="text-slate-500 mt-2 font-medium">Masuk untuk melanjutkan aktivitas literasi Anda.</p>
       </div>
 
       {successMsg && (
-        <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-r-md text-sm font-bold">
-          {successMsg}
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 p-4 mb-8 rounded-r-xl text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300">
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            {successMsg}
+          </div>
         </div>
       )}
 
-      {/* TAMPILIN ERROR DARI ACTIONS KALAU GAGAL LOGIN */}
       {errorMessage && (
-        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-r-md text-sm font-bold">
-          {errorMessage}
+        <div class="bg-rose-50 border-l-4 border-rose-500 text-rose-700 p-4 mb-8 rounded-r-xl text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300">
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+            {errorMessage}
+          </div>
         </div>
       )}
 
-      <form method="POST" action={actions.signIn} class="space-y-5">
+      <form method="POST" action={actions.signIn} class="space-y-6 relative">
         <div>
-          <label class="block text-sm font-semibold mb-1">Email</label>
-          <input type="email" name="email" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+          <label class="block text-sm font-bold text-slate-700 mb-2">Alamat Email</label>
+          <div class="relative group">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" />
+              </svg>
+            </span>
+            <input 
+              type="email" 
+              name="email" 
+              required 
+              placeholder="nama@email.com"
+              class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium text-slate-800" 
+            />
+          </div>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-1">Password</label>
-          <input type="password" name="password" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-bold text-slate-700">Kata Sandi</label>
+            <a href="/forgot-password" class="text-xs text-indigo-600 font-bold hover:text-indigo-800 transition-colors">Lupa Sandi?</a>
+          </div>
+          <div class="relative group">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </span>
+            <input 
+              type="password" 
+              name="password" 
+              required 
+              placeholder="••••••••"
+              class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium text-slate-800" 
+            />
+          </div>
         </div>
 
-        <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-lg shadow-lg transition-all active:scale-95">
-          Masuk
+        <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-indigo-100 transition-all active:scale-[0.98] flex items-center justify-center group">
+          Masuk Sekarang
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
         </button>
       </form>
 
-      <div class="mt-8 pt-6 border-t border-slate-100 text-center">
-        <p class="text-sm text-slate-600">
-          Belum punya akun? <a href="/register" class="text-blue-600 font-bold hover:underline">Daftar Akun</a>
+      <div class="mt-10 pt-8 border-t border-slate-100 text-center relative">
+        <p class="text-sm text-slate-500 font-medium">
+          Belum bergabung? <a href="/register" class="text-indigo-600 font-black hover:text-indigo-800 transition-colors underline decoration-indigo-200 underline-offset-4">Daftar Akun</a>
         </p>
       </div>
 

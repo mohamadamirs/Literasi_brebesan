@@ -50,7 +50,7 @@ export const agendaActions = {
               throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'Gagal mengubah agenda lama menjadi draft.' });
             }
           } else {
-            // Kalau nggak dicentang tapi maksain publish, tolak.
+            // Kalau tidak dicentang tapi maksain publish, tolak.
             throw new ActionError({
               code: 'CONFLICT',
               message: `Agenda "${existing[0].title}" sedang tayang. Centang opsi timpa agenda jika ingin melanjutkan.`
