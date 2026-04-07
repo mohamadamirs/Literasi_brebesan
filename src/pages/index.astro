@@ -6,9 +6,31 @@ import Agenda from "../components/main/Agenda.astro";
 import LatestPosts from "../components/main/LatestPosts.astro";
 import GaleriGrid from "../components/main/GaleriGrid.astro";
 import Footer from "../components/Footer.astro";
+
+// JSON-LD untuk Beranda
+const homeSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Literasi Brebesan",
+  "alternateName": ["LIBES", "Literasi Brebes"],
+  "url": Astro.url.origin,
+  "description": "Wadah literasi digital wong Brebes. Ruang temu alternatif untuk membaca, berdiskusi, dan bergerak bersama merawat nalar di Kabupaten Brebes.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": `${Astro.url.origin}/publikasi?search={search_term_string}`
+    },
+    "query-input": "required name=search_term_string"
+  }
+};
 ---
 
-<Layout title="Literasi Brebesan - Merawat Nalar, Menjalin Kedekatan" description="Ruang temu alternatif di Brebes untuk membaca, berdiskusi, dan bergerak bersama.">
+<Layout 
+  title="Literasi Brebesan - Merawat Nalar, Menjalin Kedekatan" 
+  description="Wadah literasi digital wong Brebes. Ruang temu alternatif untuk membaca, berdiskusi, dan bergerak bersama merawat nalar di Kabupaten Brebes."
+  schema={homeSchema}
+>
   <Header />
   <main>
     <Hero />

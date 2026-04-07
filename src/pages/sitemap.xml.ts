@@ -1,11 +1,12 @@
 import type { APIRoute } from 'astro';
 import { sql } from '../lib/db';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ url: requestUrl }) => {
+  // Gunakan origin dari request atau hardcode domain produksi
   const baseUrl = 'https://literasibrebesan.my.id';
 
   try {
-    // Ambil semua artikel yang sudah di-publish
+    // 1. Ambil semua artikel (Posts) yang sudah di-publish
     const { rows: posts } = await sql`
       SELECT slug, updated_at
       FROM posts
@@ -13,7 +14,7 @@ export const GET: APIRoute = async () => {
       ORDER BY updated_at DESC
     `;
 
-    // Ambil profil public (agar masuk sitemap)
+    // 2. Ambil profil penulis yang aktif (minimal punya 1 post published)
     const { rows: profiles } = await sql`
       SELECT p.id, MAX(po.updated_at) as last_updated
       FROM profiles p
@@ -22,36 +23,71 @@ export const GET: APIRoute = async () => {
       GROUP BY p.id
     `;
 
-    // URL Statis
-    const urls = [
-      { loc: '', lastmod: new Date().toISOString() },
-      { loc: '/publikasi', lastmod: new Date().toISOString() },
-      { loc: '/dokumentasi', lastmod: new Date().toISOString() },
-      { loc: '/login', lastmod: new Date().toISOString() },
-      { loc: '/register', lastmod: new Date().toISOString() },
+    // 3. Ambil Agenda yang sudah di-publish
+    const { rows: agendas } = await sql`
+      SELECT id, updated_at
+      FROM agendas
+      WHERE status = 'published'
+      ORDER BY updated_at DESC
+    `;
+
+    // Struktur Data Sitemap
+    const urls: { loc: string; lastmod: string; changefreq: string; priority: string }[] = [];
+
+    // --- Halaman Statis ---
+    const staticPages = [
+      { path: '', changefreq: 'daily', priority: '1.0' },
+      { path: '/publikasi', changefreq: 'daily', priority: '0.9' },
+      { path: '/dokumentasi', changefreq: 'weekly', priority: '0.8' },
     ];
 
-    // URL Dinamis (Profil Penulis)
-    profiles.forEach((profile) => {
+    staticPages.forEach(page => {
       urls.push({
-        loc: `/p/${profile.id}`,
-        lastmod: new Date(profile.last_updated).toISOString(),
+        loc: `${baseUrl}${page.path}`,
+        lastmod: new Date().toISOString(),
+        changefreq: page.changefreq,
+        priority: page.priority
       });
     });
 
-    // URL Dinamis (Artikel)
+    // --- Halaman Dinamis: Artikel (Posts) ---
     posts.forEach((post) => {
       urls.push({
-        loc: `/publikasi/${post.slug}`,
+        loc: `${baseUrl}/publikasi/${post.slug}`,
         lastmod: new Date(post.updated_at).toISOString(),
+        changefreq: 'monthly',
+        priority: '0.7',
       });
     });
 
+    // --- Halaman Dinamis: Agenda ---
+    agendas.forEach((agenda) => {
+      urls.push({
+        loc: `${baseUrl}/#agenda`, // Karena agenda biasanya tampil di Home (ID anchor) atau halaman khusus
+        lastmod: new Date(agenda.updated_at).toISOString(),
+        changefreq: 'weekly',
+        priority: '0.6',
+      });
+    });
+
+    // --- Halaman Dinamis: Profil Penulis ---
+    profiles.forEach((profile) => {
+      urls.push({
+        loc: `${baseUrl}/p/${profile.id}`,
+        lastmod: new Date(profile.last_updated).toISOString(),
+        changefreq: 'weekly',
+        priority: '0.5',
+      });
+    });
+
+    // Konstruksi XML
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((url) => `  <url>
-    <loc>${baseUrl}${url.loc}</loc>
+    <loc>${url.loc}</loc>
     <lastmod>${url.lastmod}</lastmod>
+    <changefreq>${url.changefreq}</changefreq>
+    <priority>${url.priority}</priority>
   </url>`).join('\n')}
 </urlset>`;
 
@@ -59,11 +95,24 @@ ${urls.map((url) => `  <url>
       status: 200,
       headers: {
         'Content-Type': 'application/xml',
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600', // Cache di Edge/Vercel CDN selama 1 jam
+        'X-Content-Type-Options': 'nosniff',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600',
       },
     });
   } catch (error) {
     console.error("Gagal generate sitemap:", error);
-    return new Response("Gagal membuat sitemap", { status: 500 });
+    // Kembalikan sitemap minimal jika error agar crawler tidak bingung
+    return new Response(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${baseUrl}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>`, {
+      status: 200, // Tetap 200 agar Google bisa baca sitemap darurat ini
+      headers: { 'Content-Type': 'application/xml' },
+    });
   }
 };

@@ -2,13 +2,11 @@
 User-agent: *
 Allow: /
 
-# Disallow admin and user dashboard paths to keep them out of search results
+# Jangan index halaman administratif/user
 Disallow: /admin/
+Disallow: /dashboard/
 Disallow: /user/
 Disallow: /api/
 
-# Host
-Host: https://literasibrebesan.my.id
-
-# Sitemaps
+# Lokasi Sitemap
 Sitemap: https://literasibrebesan.my.id/sitemap.xml
