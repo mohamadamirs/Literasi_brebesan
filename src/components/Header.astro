@@ -45,6 +45,9 @@ const initial = user?.fullName?.charAt(0) || 'U';
             <li class="h-5 w-px bg-slate-200 mx-1.5 md:mx-2" role="separator"></li>
             {user ? (
               <li class="flex items-center gap-1.5 md:gap-2">
+                <a href="/profile" class="px-2.5 py-1.5 md:px-3 md:py-2 text-[11px] md:text-xs font-bold text-slate-600 hover:text-blue-600 rounded-xl transition-all uppercase tracking-wider">
+                  Profil
+                </a>
                 <a href={user.role === 'admin' ? '/admin' : '/user'} class="px-2.5 py-1.5 md:px-3 md:py-2 text-[11px] md:text-xs font-bold text-slate-900 hover:bg-slate-50 rounded-xl transition-all uppercase tracking-wider flex items-center gap-1.5 md:gap-2">
                   <div class="w-5 h-5 md:w-6 md:h-6 rounded-md bg-blue-600 flex items-center justify-center text-white text-[9px] md:text-[10px] font-black uppercase">
                     {initial}
@@ -111,7 +114,10 @@ const initial = user?.fullName?.charAt(0) || 'U';
                 <span class="text-[9px] md:text-xs text-blue-600 font-black uppercase tracking-widest leading-none mt-1">{user.role}</span>
               </div>
             </div>
-            <a href={user.role === 'admin' ? '/admin' : '/user'} class="block text-center py-2.5 md:py-3 text-xs md:text-sm font-black text-slate-900 bg-slate-100 rounded-xl uppercase tracking-widest">Dashboard</a>
+            <div class="grid grid-cols-2 gap-2">
+              <a href="/profile" class="block text-center py-2.5 md:py-3 text-xs md:text-sm font-black text-slate-900 bg-slate-100 rounded-xl uppercase tracking-widest hover:bg-indigo-50 hover:text-indigo-600 transition-all">Profil</a>
+              <a href={user.role === 'admin' ? '/admin' : '/user'} class="block text-center py-2.5 md:py-3 text-xs md:text-sm font-black text-slate-900 bg-slate-100 rounded-xl uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-all">Dashboard</a>
+            </div>
             <form action="/logout" method="POST" class="w-full m-0">
               <button type="submit" class="w-full text-center py-2.5 md:py-3 text-xs md:text-sm font-black text-rose-600 uppercase tracking-widest cursor-pointer bg-rose-50 rounded-xl">Keluar Akun</button>
             </form>
