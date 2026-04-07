@@ -64,7 +64,7 @@ export default function AgendaIsland() {
     description: 'Agenda rutin mingguan Literasi Brebesan. Mari merawat nalar dan menjalin kedekatan melalui lapak baca gratis dan diskusi santai. Terbuka untuk umum.',
     event_date: 'Setiap Hari Minggu',
     event_time: '09:00 - Selesai',
-    location: 'Taman Monumen Juang Brebes',
+    location: 'Taman Monumen Juang Brebes dan Sekitarnya ( Chat Wa )',
     wa_link: 'https://wa.me/628993986415',
     image_url: '/kegiatan.webp'
   };
