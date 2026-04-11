@@ -80,7 +80,7 @@ export const GET: APIRoute = async ({ url: requestUrl }) => {
       });
     });
 
-    // Konstruksi XML
+    // Konstruksi XML yang bersih tanpa spasi di awal
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((url) => `  <url>
@@ -89,12 +89,12 @@ ${urls.map((url) => `  <url>
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
   </url>`).join('\n')}
-</urlset>`;
+</urlset>`.trim();
 
     return new Response(sitemap, {
       status: 200,
       headers: {
-        'Content-Type': 'application/xml',
+        'Content-Type': 'application/xml; charset=utf-8',
         'X-Content-Type-Options': 'nosniff',
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600',
       },
