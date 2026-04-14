@@ -4,4 +4,4 @@ Landing page -> Publikasi/Dokumentasi -> Login/Daftar.
 admin -> verify postingan user / buat postingan sendiri -> buat agenda.
 user -> buat postingan.
 
-literasibrebesan.my.id
+[ Literasi Brebesan Web ](literasibrebesan.my.id)
